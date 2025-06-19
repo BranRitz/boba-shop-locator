@@ -2,7 +2,6 @@ WIP DRAFT
 
 TODO 
 - write tests requiring mocking axios for yelp responses 
-- move logic out of handler and into service layer 
 - validate page number input starting from 1 
 - add tests around pagination
 - group test suites 
@@ -14,7 +13,7 @@ Install dependencies - npm install
 Create a .env file in the root directory with this content:
 YELP_API_KEY=your_yelp_api_key
 
-Start the server - node index.js
+Start the server - node server.js
 Backend server runs at http://localhost:3001
 
 API Spec
