@@ -11,8 +11,8 @@ const sortOptions = {
   rating: 'Sort by Rating',
 };
 
-async function getBobaShops(location, sortBy) {
-  const response = await fetch(`http://localhost:3001/api/v1/boba?location=${location}&sort_by=${sortBy}`);
+async function getBobaShops(location, sortBy, page = 1) {
+  const response = await fetch(`http://localhost:3001/api/v1/boba?location=${location}&sort_by=${sortBy}&page=${page}`);
   const data = await response.json();
   return data.businesses || [];
 }
@@ -22,14 +22,33 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState('los-gatos');
   const [sortBy, setSortBy] = useState('distance');
+  const [page, setPage] = useState(1);
+  const [moreAvailable, setMoreAvailable] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    getBobaShops(location, sortBy)
-      .then(setBobaShops)
-      .catch(err => console.error('Failed to get boba shops:', err))
-      .finally(() => setLoading(false));
+    setPage(1);
+    setBobaShops([]);
+    setMoreAvailable(true);
+    loadShops(1, true);
   }, [location, sortBy]);
+
+  const loadShops = async (pageToLoad, isNewSearch = false) => {
+    setLoading(true);
+    try {
+      const newShops = await getBobaShops(location, sortBy, pageToLoad);
+      setBobaShops(prev => isNewSearch ? newShops : [...prev, ...newShops]);
+      if (newShops.length < 20) setMoreAvailable(false);
+    } catch (err) {
+      console.error('Failed to get boba shops:', err);
+    }
+    setLoading(false);
+  };
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    loadShops(nextPage);
+  };
 
   return (
     <div>
@@ -40,14 +59,14 @@ function App() {
       </select>
 
       <select value={sortBy} onChange={e => setSortBy(e.target.value)}>
-          {Object.entries(sortOptions).map(([value, label]) => (
-            <option key={value} value={value}>{label}</option>
-          ))}
-        </select>
+        {Object.entries(sortOptions).map(([value, label]) => (
+          <option key={value} value={value}>{label}</option>
+        ))}
+      </select>
 
       <h1>Boba Shops Near Netflix's {locationNames[location]} Office</h1>
 
-      {loading ? (
+      {loading && page === 1 ? (
         <p><i>Loading boba shops</i></p>
       ) : (
         <ul>
@@ -56,6 +75,12 @@ function App() {
           ))}
         </ul>
       )}
+
+      {moreAvailable && !loading && (
+        <button onClick={handleLoadMore}>Load More Boba Shops</button>
+      )}
+
+      {loading && page > 1 && <p><i>Loading more...</i></p>}
     </div>
   );
 }
