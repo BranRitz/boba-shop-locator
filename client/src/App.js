@@ -6,8 +6,13 @@ const locationNames = {
   'la': 'Los Angeles',
 };
 
-async function getBobaShops(location) {
-  const response = await fetch(`http://localhost:3001/api/v1/boba?location=${location}`);
+const sortOptions = {
+  distance: 'Sort by Distance',
+  rating: 'Sort by Rating',
+};
+
+async function getBobaShops(location, sortBy) {
+  const response = await fetch(`http://localhost:3001/api/v1/boba?location=${location}&sort_by=${sortBy}`);
   const data = await response.json();
   return data.businesses || [];
 }
@@ -16,14 +21,15 @@ function App() {
   const [bobaShops, setBobaShops] = useState([]);
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState('los-gatos');
+  const [sortBy, setSortBy] = useState('distance');
 
   useEffect(() => {
     setLoading(true);
-    getBobaShops(location)
+    getBobaShops(location, sortBy)
       .then(setBobaShops)
       .catch(err => console.error('Failed to get boba shops:', err))
       .finally(() => setLoading(false));
-  }, [location]);
+  }, [location, sortBy]);
 
   return (
     <div>
@@ -33,7 +39,13 @@ function App() {
         ))}
       </select>
 
-      <h1>Boba Shops Near {locationNames[location]}</h1>
+      <select value={sortBy} onChange={e => setSortBy(e.target.value)}>
+          {Object.entries(sortOptions).map(([value, label]) => (
+            <option key={value} value={value}>{label}</option>
+          ))}
+        </select>
+
+      <h1>Boba Shops Near Netflix's {locationNames[location]} Office</h1>
 
       {loading ? (
         <p><i>Loading boba shops</i></p>
