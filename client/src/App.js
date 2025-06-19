@@ -1,23 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
 
 function App() {
+  const [bobaShops, setBobaShops] = useState([]);
+
+  useEffect(() => {
+    async function getBobaShops() {
+      try {
+        const response = await fetch('http://localhost:3001/api/v1/boba?location=los-gatos');
+        const data = await response.json();
+        setBobaShops(data.businesses || []);
+      } catch (error) {
+        console.error('Failed to get boba shops:', error);
+      }
+    }
+
+    getBobaShops();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Boba Shops Near Los Gatos</h1>
+      <ul>
+        {bobaShops.map(shop => (
+          <li key={shop.id}>{shop.name}</li>
+        ))}
+      </ul>
     </div>
   );
 }
