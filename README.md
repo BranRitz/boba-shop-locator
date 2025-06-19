@@ -3,6 +3,9 @@
 ## Setup Instructions
 
 Clone repo at https://github.com/BranRitz/boba-shop-locator
+```
+cd boba-shop-locator
+```
 
 ### Server:
 **Install dependencies**
@@ -17,7 +20,7 @@ Create a .env file in the server/ directory with this content:
 
 **Start the server**
 ```
-node server.js
+node server.js or npm run dev
 ```
 
 Backend server runs at `http://localhost:3001`
@@ -25,7 +28,7 @@ Backend server runs at `http://localhost:3001`
 ### Client:
 **Install dependencies**
 ```
-cd client
+cd ../client
 npm install
 ```
 
@@ -36,7 +39,7 @@ npm start
 
 Frontend server runs at `http://localhost:3000`
 
-## API Spec
+## API Spec (Server)
 
 ### GET `/api/v1/boba`
 
@@ -78,7 +81,7 @@ This project was built with a focus on clean structure, modularity, and clarity 
 - Page number validation is not yet enforced on the backend or frontend.
 - UI styling was intentionally left minimal to focus on logic first.
 
-### Next Steps (TODO)
+### Potential Next Steps (TODO)
 - Polish UI layout
 - Mock Yelp API responses for backend unit tests.
 - Add frontend test coverage for fetch, render, and pagination logic.
